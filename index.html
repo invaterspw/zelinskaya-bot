@@ -2,7 +2,7 @@
 <html lang="uk">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Рахунки | Зелинська</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
@@ -14,7 +14,6 @@
     --surface2: #22222a;
     --border: #2e2e38;
     --accent: #c8f04a;
-    --accent2: #4af0c8;
     --text: #f0f0f0;
     --muted: #6b6b7e;
     --error: #ff5f5f;
@@ -23,15 +22,14 @@
 
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
-  body {
+  html, body {
     font-family: 'Geologica', sans-serif;
     background: var(--bg);
     color: var(--text);
     min-height: 100vh;
-    padding-bottom: 100px;
+    overflow-x: hidden;
   }
 
-  /* TABS */
   .tabs {
     display: flex;
     background: var(--surface);
@@ -50,10 +48,11 @@
     font-weight: 600;
     letter-spacing: 0.05em;
     color: var(--muted);
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-    transition: all 0.2s;
+    border-bottom: 3px solid transparent;
     text-transform: uppercase;
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.2s, border-color 0.2s;
   }
 
   .tab.active {
@@ -61,11 +60,9 @@
     border-bottom-color: var(--accent);
   }
 
-  /* PANELS */
-  .panel { display: none; padding: 20px 16px; }
+  .panel { display: none; padding: 20px 16px 120px; }
   .panel.active { display: block; }
 
-  /* SECTION LABEL */
   .section-label {
     font-family: 'Unbounded', sans-serif;
     font-size: 9px;
@@ -77,7 +74,6 @@
   }
   .section-label:first-child { margin-top: 4px; }
 
-  /* FIELD */
   .field { margin-bottom: 12px; }
 
   label {
@@ -85,7 +81,6 @@
     font-size: 12px;
     color: var(--muted);
     margin-bottom: 5px;
-    font-weight: 400;
   }
 
   input, select, textarea {
@@ -103,10 +98,7 @@
     appearance: none;
   }
 
-  input:focus, select:focus, textarea:focus {
-    border-color: var(--accent);
-  }
-
+  input:focus, select:focus { border-color: var(--accent); }
   input::placeholder { color: var(--muted); }
 
   select {
@@ -116,223 +108,113 @@
     padding-right: 40px;
     cursor: pointer;
   }
+  select option { background: #22222a; }
 
-  select option { background: var(--surface2); }
+  .radio-group { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 
-  /* RADIO GROUP */
-  .radio-group {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-  }
-
-  .radio-option {
-    position: relative;
-  }
-
-  .radio-option input[type="radio"] {
-    position: absolute;
-    opacity: 0;
-    width: 0;
-    height: 0;
-  }
-
+  .radio-option { position: relative; }
+  .radio-option input[type="radio"] { position: absolute; opacity: 0; width: 0; height: 0; }
   .radio-option label {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     padding: 13px 8px;
     background: var(--surface2);
     border: 1px solid var(--border);
     border-radius: var(--radius);
     cursor: pointer;
-    font-size: 13px;
-    font-weight: 500;
+    font-size: 13px; font-weight: 500;
     color: var(--muted);
     transition: all 0.2s;
-    text-align: center;
-    margin: 0;
+    text-align: center; margin: 0;
   }
-
   .radio-option input[type="radio"]:checked + label {
-    background: rgba(200, 240, 74, 0.12);
+    background: rgba(200,240,74,0.12);
     border-color: var(--accent);
     color: var(--accent);
   }
 
-  /* OPTIONAL BADGE */
   .optional {
-    display: inline-block;
-    font-size: 10px;
-    background: var(--surface2);
-    color: var(--muted);
-    border-radius: 4px;
-    padding: 1px 6px;
-    margin-left: 6px;
-    vertical-align: middle;
+    display: inline-block; font-size: 10px;
+    background: var(--surface2); color: var(--muted);
+    border-radius: 4px; padding: 1px 6px; margin-left: 6px;
   }
 
-  /* INFO ROW */
   .info-row {
-    display: flex;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 13px 15px;
-    align-items: center;
-    gap: 10px;
+    display: flex; background: var(--surface2);
+    border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 13px 15px; align-items: center; gap: 10px; margin-bottom: 8px;
   }
-
   .info-row .info-label { font-size: 12px; color: var(--muted); flex: 0 0 auto; }
   .info-row .info-value { font-size: 15px; color: var(--text); font-weight: 500; }
 
-  /* SUBMIT BUTTON */
-  .submit-btn {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
+  .divider { height: 1px; background: var(--border); margin: 20px 0; }
+
+  .submit-wrap {
+    position: fixed; bottom: 0; left: 0; right: 0;
     padding: 16px 16px calc(16px + env(safe-area-inset-bottom));
-    background: linear-gradient(to top, var(--bg) 60%, transparent);
+    background: linear-gradient(to top, var(--bg) 70%, transparent);
     z-index: 200;
   }
 
-  .submit-btn button {
+  #submit-btn {
     width: 100%;
-    background: var(--accent);
-    color: #0f0f12;
-    border: none;
-    border-radius: var(--radius);
+    background: var(--accent); color: #0f0f12;
+    border: none; border-radius: var(--radius);
     font-family: 'Unbounded', sans-serif;
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    padding: 16px;
-    cursor: pointer;
+    font-size: 13px; font-weight: 700; letter-spacing: 0.05em;
+    padding: 16px; cursor: pointer;
     transition: transform 0.1s, opacity 0.2s;
+    -webkit-appearance: none;
   }
+  #submit-btn:active { transform: scale(0.98); }
+  #submit-btn:disabled { opacity: 0.45; }
 
-  .submit-btn button:active { transform: scale(0.98); }
-  .submit-btn button:disabled { opacity: 0.4; cursor: not-allowed; }
-
-  /* STATUS */
-  .status {
-    position: fixed;
-    top: 60px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 100px;
-    padding: 10px 20px;
-    font-size: 13px;
-    font-weight: 500;
-    z-index: 300;
-    white-space: nowrap;
-    opacity: 0;
-    transition: opacity 0.3s;
-    pointer-events: none;
+  .toast {
+    position: fixed; top: 70px; left: 50%; transform: translateX(-50%);
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 100px; padding: 10px 20px;
+    font-size: 13px; font-weight: 500;
+    z-index: 300; white-space: nowrap;
+    opacity: 0; transition: opacity 0.3s; pointer-events: none;
   }
-  .status.show { opacity: 1; }
-  .status.ok { border-color: var(--accent); color: var(--accent); }
-  .status.err { border-color: var(--error); color: var(--error); }
-
-  /* DIVIDER */
-  .divider {
-    height: 1px;
-    background: var(--border);
-    margin: 20px 0;
-  }
+  .toast.show { opacity: 1; }
+  .toast.ok { border-color: var(--accent); color: var(--accent); }
+  .toast.err { border-color: var(--error); color: var(--error); }
 </style>
 </head>
 <body>
 
 <div class="tabs">
-  <div class="tab active" onclick="switchTab('zamovnyk')">👤 Замовник</div>
-  <div class="tab" onclick="switchTab('docs')">📄 Документи</div>
+  <div class="tab active" id="tab-zamovnyk">👤 Замовник</div>
+  <div class="tab" id="tab-docs">📄 Документи</div>
 </div>
 
 <div id="panel-zamovnyk" class="panel active">
   <div class="section-label">Дані замовника</div>
-
-  <div class="field">
-    <label>Назва замовника *</label>
-    <input type="text" id="z-name" placeholder="ТОВ «Назва» або ФОП Прізвище І.П." autocomplete="off">
-  </div>
-
-  <div class="field">
-    <label>Уповноважена особа *</label>
-    <input type="text" id="z-person" placeholder="Прізвище Ім'я По-батькові">
-  </div>
-
-  <div class="field">
-    <label>Посада *</label>
-    <input type="text" id="z-posada" placeholder="Директор / ФОП">
-  </div>
-
-  <div class="field">
-    <label>Реквізити (IBAN) *</label>
-    <input type="text" id="z-iban" placeholder="UA…">
-  </div>
-
-  <div class="field">
-    <label>ЄДРПОУ *</label>
-    <input type="text" id="z-edrpou" placeholder="12345678" inputmode="numeric">
-  </div>
-
+  <div class="field"><label>Назва замовника *</label><input type="text" id="z-name" placeholder="ТОВ «Назва» або ФОП Прізвище І.П." autocomplete="off"></div>
+  <div class="field"><label>Уповноважена особа *</label><input type="text" id="z-person" placeholder="Прізвище Ім'я По-батькові"></div>
+  <div class="field"><label>Посада *</label><input type="text" id="z-posada" placeholder="Директор / ФОП"></div>
+  <div class="field"><label>Реквізити (IBAN) *</label><input type="text" id="z-iban" placeholder="UA…"></div>
+  <div class="field"><label>ЄДРПОУ *</label><input type="text" id="z-edrpou" placeholder="12345678" inputmode="numeric"></div>
   <div class="divider"></div>
   <div class="section-label">Необов'язково</div>
-
-  <div class="field">
-    <label>Email <span class="optional">необов'язково</span></label>
-    <input type="email" id="z-email" placeholder="email@company.ua" inputmode="email">
-  </div>
-
-  <div class="field">
-    <label>Хто це? <span class="optional">необов'язково</span></label>
-    <input type="text" id="z-hto" placeholder="Назва бренду / продукт">
-  </div>
-
-  <div class="field">
-    <label>Адреса <span class="optional">необов'язково</span></label>
-    <input type="text" id="z-adresa" placeholder="Місто, вулиця, будинок">
-  </div>
+  <div class="field"><label>Email <span class="optional">необов'язково</span></label><input type="email" id="z-email" placeholder="email@company.ua" inputmode="email"></div>
+  <div class="field"><label>Хто це? <span class="optional">необов'язково</span></label><input type="text" id="z-hto" placeholder="Назва бренду / продукт"></div>
+  <div class="field"><label>Адреса <span class="optional">необов'язково</span></label><input type="text" id="z-adresa" placeholder="Місто, вулиця, будинок"></div>
 </div>
 
 <div id="panel-docs" class="panel">
   <div class="section-label">Деталі співпраці</div>
-
-  <div class="field">
-    <label>Дата співпраці *</label>
-    <input type="date" id="d-date-coop" style="color-scheme: dark;">
-  </div>
-
-  <div class="field">
-    <label>Назва замовника *</label>
-    <input type="text" id="d-zamovnyk" placeholder="ТОВ «Назва» або ФОП…" autocomplete="off">
-  </div>
-
+  <div class="field"><label>Дата співпраці *</label><input type="date" id="d-date-coop" style="color-scheme:dark;"></div>
+  <div class="field"><label>Назва замовника *</label><input type="text" id="d-zamovnyk" placeholder="ТОВ «Назва» або ФОП…" autocomplete="off"></div>
   <div class="section-label">Оплата</div>
-
   <div class="field">
     <label>На який ФОП *</label>
     <div class="radio-group">
-      <div class="radio-option">
-        <input type="radio" name="fop" id="fop-a" value="Арсієнко І.Р.">
-        <label for="fop-a">Арсієнко І.Р.</label>
-      </div>
-      <div class="radio-option">
-        <input type="radio" name="fop" id="fop-z" value="Зелинська І.В.">
-        <label for="fop-z">Зелинська І.В.</label>
-      </div>
+      <div class="radio-option"><input type="radio" name="fop" id="fop-a" value="Арсієнко І.Р."><label for="fop-a">Арсієнко І.Р.</label></div>
+      <div class="radio-option"><input type="radio" name="fop" id="fop-z" value="Зелинська І.В."><label for="fop-z">Зелинська І.В.</label></div>
     </div>
   </div>
-
-  <div class="field">
-    <label>Сума нарахування (грн) *</label>
-    <input type="number" id="d-suma" placeholder="0" inputmode="numeric">
-  </div>
-
+  <div class="field"><label>Сума нарахування (грн) *</label><input type="number" id="d-suma" placeholder="0" inputmode="numeric"></div>
   <div class="field">
     <label>Послуга *</label>
     <select id="d-posluga">
@@ -345,176 +227,138 @@
       <option>тікток + рілс + спільна публікація</option>
     </select>
   </div>
-
   <div class="section-label">Розраховується автоматично</div>
-
-  <div class="info-row" style="margin-bottom: 8px;">
-    <span class="info-label">Дата рахунку</span>
-    <span class="info-value" id="d-date-invoice">—</span>
-  </div>
-  <div class="info-row">
-    <span class="info-label">Дата акту</span>
-    <span class="info-value" id="d-date-act">—</span>
-  </div>
+  <div class="info-row"><span class="info-label">Дата рахунку</span><span class="info-value" id="d-date-invoice">—</span></div>
+  <div class="info-row"><span class="info-label">Дата акту</span><span class="info-value" id="d-date-act">—</span></div>
 </div>
 
-<div class="submit-btn">
-  <button id="submit-btn" onclick="handleSubmit()">Зберегти</button>
+<div class="submit-wrap">
+  <button id="submit-btn">Зберегти замовника</button>
 </div>
 
-<div class="status" id="status"></div>
+<div class="toast" id="toast"></div>
 
 <script>
-  const tg = window.Telegram.WebApp;
-  tg.ready();
-  tg.expand();
+  // ── Telegram WebApp ───────────────────────────────────
+  const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+  if (tg) { tg.ready(); tg.expand(); }
 
-  let currentTab = 'zamovnyk';
-
-  // ── Дати ──────────────────────────────────────────────
-  function todayStr() {
-    const d = new Date();
-    return d.toLocaleDateString('uk-UA', { day:'2-digit', month:'2-digit', year:'numeric' });
-  }
-
-  function addDays(dateStr, n) {
-    // dateStr може бути у форматі YYYY-MM-DD (від input type=date)
-    const d = new Date(dateStr);
-    d.setDate(d.getDate() + n);
-    return d.toLocaleDateString('uk-UA', { day:'2-digit', month:'2-digit', year:'numeric' });
-  }
-
-  function formatDateUA(dateStr) {
-    if (!dateStr) return '—';
-    const d = new Date(dateStr);
-    return d.toLocaleDateString('uk-UA', { day:'2-digit', month:'2-digit', year:'numeric' });
-  }
-
-  // Оновлення автодат
-  document.getElementById('d-date-coop').addEventListener('change', function() {
-    const val = this.value;
-    document.getElementById('d-date-invoice').textContent = todayStr();
-    document.getElementById('d-date-act').textContent = val ? addDays(val, 1) : '—';
-  });
-
-  // Встановити дату рахунку одразу
-  document.getElementById('d-date-invoice').textContent = todayStr();
+  // ── Webhooks ──────────────────────────────────────────
+  const WH_ZAMOVNYK = 'https://hook.eu1.make.com/o2b3kk5762msxcid9k6q0jedkz7x5xi4';
+  const WH_DOCS     = 'https://hook.eu1.make.com/xuh3fdmuqvyle2wi2zm4pp1ag95369c8';
 
   // ── Tabs ──────────────────────────────────────────────
+  let currentTab = 'zamovnyk';
+
   function switchTab(tab) {
     currentTab = tab;
-    document.querySelectorAll('.tab').forEach((t, i) => {
-      t.classList.toggle('active', (i === 0 && tab === 'zamovnyk') || (i === 1 && tab === 'docs'));
-    });
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-    document.getElementById('panel-' + tab).classList.add('active');
-    updateBtnLabel();
-  }
-
-  function updateBtnLabel() {
+    document.getElementById('tab-zamovnyk').classList.toggle('active', tab === 'zamovnyk');
+    document.getElementById('tab-docs').classList.toggle('active', tab === 'docs');
+    document.getElementById('panel-zamovnyk').classList.toggle('active', tab === 'zamovnyk');
+    document.getElementById('panel-docs').classList.toggle('active', tab === 'docs');
     document.getElementById('submit-btn').textContent =
-      currentTab === 'zamovnyk' ? 'Зберегти замовника' : 'Сформувати документи';
+      tab === 'zamovnyk' ? 'Зберегти замовника' : 'Сформувати документи';
   }
-  updateBtnLabel();
 
-  // ── Validation ────────────────────────────────────────
+  document.getElementById('tab-zamovnyk').addEventListener('click', function() { switchTab('zamovnyk'); });
+  document.getElementById('tab-docs').addEventListener('click', function() { switchTab('docs'); });
+
+  // ── Дати ─────────────────────────────────────────────
+  function todayUA() {
+    return new Date().toLocaleDateString('uk-UA', {day:'2-digit', month:'2-digit', year:'numeric'});
+  }
+  function dateToUA(str) {
+    if (!str) return '—';
+    const d = new Date(str);
+    return d.toLocaleDateString('uk-UA', {day:'2-digit', month:'2-digit', year:'numeric'});
+  }
+  function datePlusOne(str) {
+    if (!str) return '—';
+    const d = new Date(str);
+    d.setDate(d.getDate() + 1);
+    return d.toLocaleDateString('uk-UA', {day:'2-digit', month:'2-digit', year:'numeric'});
+  }
+
+  document.getElementById('d-date-invoice').textContent = todayUA();
+
+  document.getElementById('d-date-coop').addEventListener('change', function() {
+    document.getElementById('d-date-act').textContent = datePlusOne(this.value);
+  });
+
+  // ── Toast ─────────────────────────────────────────────
+  function showToast(msg, type) {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.className = 'toast show ' + type;
+    setTimeout(function() { el.classList.remove('show'); }, 3000);
+  }
+
+  // ── Validate ──────────────────────────────────────────
   function validate() {
     if (currentTab === 'zamovnyk') {
-      const required = ['z-name','z-person','z-posada','z-iban','z-edrpou'];
-      return required.every(id => document.getElementById(id).value.trim());
-    } else {
-      const dateCoop = document.getElementById('d-date-coop').value;
-      const zamovnyk = document.getElementById('d-zamovnyk').value.trim();
-      const fop = document.querySelector('input[name="fop"]:checked');
-      const suma = document.getElementById('d-suma').value.trim();
-      const posluga = document.getElementById('d-posluga').value;
-      return dateCoop && zamovnyk && fop && suma && posluga;
+      return ['z-name','z-person','z-posada','z-iban','z-edrpou']
+        .every(function(id) { return document.getElementById(id).value.trim() !== ''; });
     }
-  }
-
-  // ── Status ────────────────────────────────────────────
-  function showStatus(msg, type) {
-    const el = document.getElementById('status');
-    el.textContent = msg;
-    el.className = 'status show ' + type;
-    setTimeout(() => el.classList.remove('show'), 3000);
+    return document.getElementById('d-date-coop').value !== ''
+      && document.getElementById('d-zamovnyk').value.trim() !== ''
+      && document.querySelector('input[name="fop"]:checked') !== null
+      && document.getElementById('d-suma').value.trim() !== ''
+      && document.getElementById('d-posluga').value !== '';
   }
 
   // ── Submit ────────────────────────────────────────────
-  async function handleSubmit() {
-    if (!validate()) {
-      showStatus('Заповніть усі обов\'язкові поля', 'err');
-      return;
-    }
-
-    const btn = document.getElementById('submit-btn');
+  document.getElementById('submit-btn').addEventListener('click', function() {
+    if (!validate()) { showToast("Заповніть усі обов'язкові поля", 'err'); return; }
+    var btn = document.getElementById('submit-btn');
     btn.disabled = true;
     btn.textContent = 'Надсилаємо…';
 
-    try {
-      if (currentTab === 'zamovnyk') {
-        await submitZamovnyk();
-      } else {
-        await submitDocs();
-      }
-    } catch(e) {
-      showStatus('Помилка: ' + e.message, 'err');
-      btn.disabled = false;
-      updateBtnLabel();
+    var payload, url;
+
+    if (currentTab === 'zamovnyk') {
+      url = WH_ZAMOVNYK;
+      payload = {
+        type:   'zamovnyk',
+        name:   document.getElementById('z-name').value.trim(),
+        person: document.getElementById('z-person').value.trim(),
+        posada: document.getElementById('z-posada').value.trim(),
+        iban:   document.getElementById('z-iban').value.trim(),
+        edrpou: document.getElementById('z-edrpou').value.trim(),
+        email:  document.getElementById('z-email').value.trim(),
+        hto:    document.getElementById('z-hto').value.trim(),
+        adresa: document.getElementById('z-adresa').value.trim()
+      };
+    } else {
+      var dateCoop = document.getElementById('d-date-coop').value;
+      url = WH_DOCS;
+      payload = {
+        type:         'docs',
+        date_coop:    dateToUA(dateCoop),
+        date_invoice: todayUA(),
+        date_act:     datePlusOne(dateCoop),
+        zamovnyk:     document.getElementById('d-zamovnyk').value.trim(),
+        fop:          document.querySelector('input[name="fop"]:checked').value,
+        suma:         document.getElementById('d-suma').value.trim(),
+        posluga:      document.getElementById('d-posluga').value
+      };
     }
-  }
 
-  async function submitZamovnyk() {
-    const payload = {
-      type: 'zamovnyk',
-      name:    document.getElementById('z-name').value.trim(),
-      person:  document.getElementById('z-person').value.trim(),
-      posada:  document.getElementById('z-posada').value.trim(),
-      iban:    document.getElementById('z-iban').value.trim(),
-      edrpou:  document.getElementById('z-edrpou').value.trim(),
-      email:   document.getElementById('z-email').value.trim(),
-      hto:     document.getElementById('z-hto').value.trim(),
-      adresa:  document.getElementById('z-adresa').value.trim(),
-    };
-
-    // WEBHOOK_ZAMOVNYK — підставимо після деплою
-    const WEBHOOK = 'https://hook.eu1.make.com/o2b3kk5762msxcid9k6q0jedkz7x5xi4';
-    const res = await fetch(WEBHOOK, {
+    fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
+    })
+    .then(function(r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      showToast(currentTab === 'zamovnyk' ? '✅ Замовника збережено!' : '✅ Документи формуються!', 'ok');
+      setTimeout(function() { if (tg) tg.close(); }, 2000);
+    })
+    .catch(function(e) {
+      showToast('Помилка: ' + e.message, 'err');
+      btn.disabled = false;
+      btn.textContent = currentTab === 'zamovnyk' ? 'Зберегти замовника' : 'Сформувати документи';
     });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-
-    showStatus('✅ Замовника збережено!', 'ok');
-    setTimeout(() => tg.close(), 2000);
-  }
-
-  async function submitDocs() {
-    const dateCoop = document.getElementById('d-date-coop').value;
-    const payload = {
-      type:        'docs',
-      date_coop:   formatDateUA(dateCoop),
-      date_invoice: todayStr(),
-      date_act:    addDays(dateCoop, 1),
-      zamovnyk:    document.getElementById('d-zamovnyk').value.trim(),
-      fop:         document.querySelector('input[name="fop"]:checked').value,
-      suma:        document.getElementById('d-suma').value.trim(),
-      posluga:     document.getElementById('d-posluga').value,
-    };
-
-    // _DOCS — підставимо після деплою
-    const  = 'https://hook.eu1.make.com/xuh3fdmuqvyle2wi2zm4pp1ag95369c8';
-    const res = await fetch(WEBHOOK, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-
-    showStatus('✅ Документи формуються!', 'ok');
-    setTimeout(() => tg.close(), 2000);
-  }
+  });
 </script>
 </body>
 </html>

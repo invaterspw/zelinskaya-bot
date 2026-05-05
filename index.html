@@ -55,10 +55,7 @@
     transition: color 0.2s, border-color 0.2s;
   }
 
-  .tab.active {
-    color: var(--accent);
-    border-bottom-color: var(--accent);
-  }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
 
   .panel { display: none; padding: 20px 16px 120px; }
   .panel.active { display: block; }
@@ -109,9 +106,9 @@
     cursor: pointer;
   }
   select option { background: #22222a; }
+  select.loading { color: var(--muted); }
 
   .radio-group { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-
   .radio-option { position: relative; }
   .radio-option input[type="radio"] { position: absolute; opacity: 0; width: 0; height: 0; }
   .radio-option label {
@@ -188,25 +185,72 @@
   <div class="tab" id="tab-docs">📄 Документи</div>
 </div>
 
+<!-- ВКЛАДКА ЗАМОВНИК -->
 <div id="panel-zamovnyk" class="panel active">
   <div class="section-label">Дані замовника</div>
-  <div class="field"><label>Назва замовника *</label><input type="text" id="z-name" placeholder="ТОВ «Назва» або ФОП Прізвище І.П." autocomplete="off"></div>
-  <div class="field"><label>Уповноважена особа *</label><input type="text" id="z-person" placeholder="Прізвище Ім'я По-батькові"></div>
-  <div class="field"><label>Посада *</label><input type="text" id="z-posada" placeholder="Директор / ФОП"></div>
-  <div class="field"><label>Реквізити (IBAN) *</label><input type="text" id="z-iban" placeholder="UA…"></div>
-  <div class="field"><label>ЄДРПОУ *</label><input type="text" id="z-edrpou" placeholder="12345678" inputmode="numeric"></div>
+
+  <div class="field">
+    <label>Назва замовника *</label>
+    <input type="text" id="z-name" placeholder="ТОВ «Назва» або ФОП Прізвище І.П." autocomplete="off">
+  </div>
+
+  <div class="field">
+    <label>Уповноважена особа *</label>
+    <input type="text" id="z-person" placeholder="Прізвище Ім'я По-батькові">
+  </div>
+
+  <div class="field">
+    <label>Посада *</label>
+    <input type="text" id="z-posada" placeholder="Директор / ФОП">
+  </div>
+
+  <div class="field">
+    <label>Реквізити (IBAN) *</label>
+    <input type="text" id="z-iban" placeholder="UA…">
+  </div>
+
+  <div class="field">
+    <label>ЄДРПОУ *</label>
+    <input type="text" id="z-edrpou" placeholder="12345678" inputmode="numeric">
+  </div>
+
   <div class="divider"></div>
   <div class="section-label">Необов'язково</div>
-  <div class="field"><label>Email <span class="optional">необов'язково</span></label><input type="email" id="z-email" placeholder="email@company.ua" inputmode="email"></div>
-  <div class="field"><label>Хто це? <span class="optional">необов'язково</span></label><input type="text" id="z-hto" placeholder="Назва бренду / продукт"></div>
-  <div class="field"><label>Адреса <span class="optional">необов'язково</span></label><input type="text" id="z-adresa" placeholder="Місто, вулиця, будинок"></div>
+
+  <div class="field">
+    <label>Email <span class="optional">необов'язково</span></label>
+    <input type="email" id="z-email" placeholder="email@company.ua" inputmode="email">
+  </div>
+
+  <div class="field">
+    <label>Хто це? <span class="optional">необов'язково</span></label>
+    <input type="text" id="z-hto" placeholder="Назва бренду / продукт">
+  </div>
+
+  <div class="field">
+    <label>Адреса <span class="optional">необов'язково</span></label>
+    <input type="text" id="z-adresa" placeholder="Місто, вулиця, будинок">
+  </div>
 </div>
 
+<!-- ВКЛАДКА ДОКУМЕНТИ -->
 <div id="panel-docs" class="panel">
   <div class="section-label">Деталі співпраці</div>
-  <div class="field"><label>Дата співпраці *</label><input type="date" id="d-date-coop" style="color-scheme:dark;"></div>
-  <div class="field"><label>Назва замовника *</label><input type="text" id="d-zamovnyk" placeholder="ТОВ «Назва» або ФОП…" autocomplete="off"></div>
+
+  <div class="field">
+    <label>Дата співпраці *</label>
+    <input type="date" id="d-date-coop" style="color-scheme:dark;">
+  </div>
+
+  <div class="field">
+    <label>Замовник *</label>
+    <select id="d-zamovnyk" class="loading">
+      <option value="">Завантаження…</option>
+    </select>
+  </div>
+
   <div class="section-label">Оплата</div>
+
   <div class="field">
     <label>На який ФОП *</label>
     <div class="radio-group">
@@ -214,7 +258,12 @@
       <div class="radio-option"><input type="radio" name="fop" id="fop-z" value="Зелинська І.В."><label for="fop-z">Зелинська І.В.</label></div>
     </div>
   </div>
-  <div class="field"><label>Сума нарахування (грн) *</label><input type="number" id="d-suma" placeholder="0" inputmode="numeric"></div>
+
+  <div class="field">
+    <label>Сума нарахування (грн) *</label>
+    <input type="number" id="d-suma" placeholder="0" inputmode="numeric">
+  </div>
+
   <div class="field">
     <label>Послуга *</label>
     <select id="d-posluga">
@@ -227,6 +276,7 @@
       <option>тікток + рілс + спільна публікація</option>
     </select>
   </div>
+
   <div class="section-label">Розраховується автоматично</div>
   <div class="info-row"><span class="info-label">Дата рахунку</span><span class="info-value" id="d-date-invoice">—</span></div>
   <div class="info-row"><span class="info-label">Дата акту</span><span class="info-value" id="d-date-act">—</span></div>
@@ -239,17 +289,46 @@
 <div class="toast" id="toast"></div>
 
 <script>
-  // ── Telegram WebApp ───────────────────────────────────
-  const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+  var tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
   if (tg) { tg.ready(); tg.expand(); }
 
-  // ── Webhooks ──────────────────────────────────────────
-  const WH_ZAMOVNYK = 'https://hook.eu1.make.com/o2b3kk5762msxcid9k6q0jedkz7x5xi4';
-  const WH_DOCS     = 'https://hook.eu1.make.com/78js59y2hgkxmv7s87fq9ah8o8rfs9lf';
+  var WH_ZAMOVNYK  = 'https://hook.eu1.make.com/o2b3kk5762msxcid9k6q0jedkz7x5xi4';
+  var WH_DOCS      = 'https://hook.eu1.make.com/xuh3fdmuqvyle2wi2zm4pp1ag95369c8';
+  var WH_CLIENTS   = 'https://hook.eu1.make.com/dpr8isbh2e3cchf6ap19pg7uu4gd9xsw';
+
+  var currentTab = 'zamovnyk';
+
+  // ── Завантаження замовників ───────────────────────────
+  function loadClients() {
+    var sel = document.getElementById('d-zamovnyk');
+    fetch(WH_CLIENTS)
+      .then(function(r) { return r.text(); })
+      .then(function(text) {
+        var names = text.split('|').map(function(s) { return s.trim(); }).filter(Boolean);
+        sel.innerHTML = '<option value="" disabled selected>Оберіть замовника…</option>';
+        names.forEach(function(name) {
+          var opt = document.createElement('option');
+          opt.value = name;
+          opt.textContent = name;
+          sel.appendChild(opt);
+        });
+        sel.classList.remove('loading');
+      })
+      .catch(function() {
+        sel.innerHTML = '<option value="" disabled selected>Помилка завантаження — введіть вручну</option>';
+        // Fallback: замінюємо на текстове поле
+        var input = document.createElement('input');
+        input.type = 'text';
+        input.id = 'd-zamovnyk';
+        input.placeholder = 'ТОВ «Назва» або ФОП…';
+        input.autocomplete = 'off';
+        sel.parentNode.replaceChild(input, sel);
+      });
+  }
+
+  loadClients();
 
   // ── Tabs ──────────────────────────────────────────────
-  let currentTab = 'zamovnyk';
-
   function switchTab(tab) {
     currentTab = tab;
     document.getElementById('tab-zamovnyk').classList.toggle('active', tab === 'zamovnyk');
@@ -269,25 +348,24 @@
   }
   function dateToUA(str) {
     if (!str) return '—';
-    const d = new Date(str);
+    var d = new Date(str);
     return d.toLocaleDateString('uk-UA', {day:'2-digit', month:'2-digit', year:'numeric'});
   }
   function datePlusOne(str) {
     if (!str) return '—';
-    const d = new Date(str);
+    var d = new Date(str);
     d.setDate(d.getDate() + 1);
     return d.toLocaleDateString('uk-UA', {day:'2-digit', month:'2-digit', year:'numeric'});
   }
 
   document.getElementById('d-date-invoice').textContent = todayUA();
-
   document.getElementById('d-date-coop').addEventListener('change', function() {
     document.getElementById('d-date-act').textContent = datePlusOne(this.value);
   });
 
   // ── Toast ─────────────────────────────────────────────
   function showToast(msg, type) {
-    const el = document.getElementById('toast');
+    var el = document.getElementById('toast');
     el.textContent = msg;
     el.className = 'toast show ' + type;
     setTimeout(function() { el.classList.remove('show'); }, 3000);
@@ -299,8 +377,10 @@
       return ['z-name','z-person','z-posada','z-iban','z-edrpou']
         .every(function(id) { return document.getElementById(id).value.trim() !== ''; });
     }
+    var zamovnyk = document.getElementById('d-zamovnyk');
+    var zamovnykVal = zamovnyk ? zamovnyk.value.trim() : '';
     return document.getElementById('d-date-coop').value !== ''
-      && document.getElementById('d-zamovnyk').value.trim() !== ''
+      && zamovnykVal !== ''
       && document.querySelector('input[name="fop"]:checked') !== null
       && document.getElementById('d-suma').value.trim() !== ''
       && document.getElementById('d-posluga').value !== '';
@@ -330,13 +410,14 @@
       };
     } else {
       var dateCoop = document.getElementById('d-date-coop').value;
+      var zamovnykEl = document.getElementById('d-zamovnyk');
       url = WH_DOCS;
       payload = {
         type:         'docs',
         date_coop:    dateToUA(dateCoop),
         date_invoice: todayUA(),
         date_act:     datePlusOne(dateCoop),
-        zamovnyk:     document.getElementById('d-zamovnyk').value.trim(),
+        zamovnyk:     zamovnykEl ? zamovnykEl.value.trim() : '',
         fop:          document.querySelector('input[name="fop"]:checked').value,
         suma:         document.getElementById('d-suma').value.trim(),
         posluga:      document.getElementById('d-posluga').value
